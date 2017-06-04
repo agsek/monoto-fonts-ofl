@@ -14,7 +14,7 @@ $color-button: #f9f9f9;
 $color-accent: #e91e63;
 
 // FONTS
-$font-main: 'Monoto';
+$font-main: var(--font-family), 'VotoSerifGX', 'MonotoVF-Regular';
 $font-header-size: 5rem;
 $font-line-height: 1.5;
 

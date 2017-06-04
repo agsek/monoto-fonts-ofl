@@ -93,7 +93,7 @@ input[type=radio] {
 	appearance: none;
 	display: none;
 
-	&:checked ~label {
+	&:checked + label {
 		background-color: #eee;
 	}
 
@@ -104,4 +104,10 @@ input[type=radio] {
 		display: block;
 		padding: 3px 5px;
 	}
+}
+
+label {
+	color: #000;
+	display: block;
+	width: 100%;
 }

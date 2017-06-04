@@ -5,6 +5,7 @@ body {
 	font-size: 100%;
 	-webkit-font-smoothing: antialiased;
 	font-variation-settings: var(--font-variation-settings);
+	font-feature-settings: var(--font-feature-settings);
 	letter-spacing: 0.02em;
 }
 
@@ -123,6 +124,14 @@ fieldset {
 	    height: $dim-settings-button;
 	    right: $dim-settings-button;
 	    transition: right #{$transition-duration} #{$transition-timing-function}, background 0s #{$transition-timing-function} #{$transition-delay};
+	}
+}
+
+.font-settings {
+	display: none;
+	
+	&.selected {
+		display: block;
 	}
 }
 

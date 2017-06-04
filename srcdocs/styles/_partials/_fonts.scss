@@ -1,5 +1,11 @@
 @font-face {
-	font-family: Monoto;
+	font-family: 'MonotoVF-Regular';
     src: url(../fonts/Monoto-VF.woff);
+    //font-variation-settings: "wdth" 100, "wght" 90;
+}
+
+@font-face {
+	font-family: 'VotoSerifGX';
+    src: url(../fonts/VotoSerifGX.woff);
     //font-variation-settings: "wdth" 100, "wght" 90;
 }
