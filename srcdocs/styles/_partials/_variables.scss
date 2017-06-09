@@ -7,9 +7,9 @@ $color-silver: #ccc;
 $color-silver-chalice: #aaa;
 
 // Functions
-$color-background: #222;
+$color-background: ghostwhite;
 $color-font-light: #f9f9f9;
-$color-font-dark: #333;
+$color-font-main: #333;
 $color-button: #f9f9f9;
 $color-accent: #e91e63;
 
@@ -20,13 +20,8 @@ $font-line-height: 1.5;
 
 // DIMENSIONS
 $dim-container-width: 800px;
-$dim-settings-button: 2rem;
 
 // TRANSITIONS
 $transition-duration: 300ms;
 $transition-delay: 240ms;
 $transition-timing-function: ease-in-out;
-
-// SVG
-$svg-gear: '../images/gear.svg';
-$svg-exit: '../images/exit.svg';

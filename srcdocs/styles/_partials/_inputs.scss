@@ -1,3 +1,5 @@
+@import 'variables';
+
 // Mixins
 @mixin rangeThumb() {
 	border: none;
@@ -110,4 +112,63 @@ label {
 	color: #000;
 	display: block;
 	width: 100%;
+}
+
+.input-set.range {
+	padding: 1em;
+	margin: 1em 0 0;
+	width: 100%;
+	color: $color-font-main;
+	position: relative;
+
+	label {
+		text-align: center;
+		text-transform: uppercase;
+		font-size: .7em;
+		letter-spacing: .08em;
+		padding: 1em .5em 0;
+	}
+
+	output {
+		position: absolute;
+		top: -1.65em;
+		left: 0;
+		background-color: $color-font-main;
+		color: $color-font-light;
+		box-sizing: content-box;
+		padding: .4em .6em;
+		min-width: 1.5em;
+		text-align: center;
+
+		&:after {
+			content: '';
+			position: absolute;
+			width: 0;
+			height: 0;
+			border-top: 5px solid $color-font-main;
+			border-left: 10px solid transparent;
+			border-right: 10px solid transparent;
+			top: 100%;
+			left: 50%;
+			margin-left: -10px;
+		}
+	}
+
+	label,
+	input,
+	output {
+		display: block;
+	}
+}
+
+.checkboxes {
+	label {
+		width: 50%;
+		float: left;
+	}
+
+	[type="checkbox"] {
+		float: left;
+		margin: 0 5px;
+	}
 }

@@ -4,7 +4,6 @@ var mnt = mnt || {};
 mnt.init = function() {
 	var _self = this;
 
-    _self.settingsSection.init();
 	_self.methods.init();
 };
 
@@ -45,7 +44,7 @@ mnt.helpers = {
 	 * @returns {string}
      */
     getFontVariationBold: function(fontSettings, fontName) {
-        return mnt.fonts[fontName].bold ? fontSettings.replace(/^(.*?"wght" )([\d.]*)(.*)$/, '$1' + mnt.fonts[fontName].bold + '$3') : null;
+        return mnt.fonts[fontName].bold ? fontSettings.replace(/^(.*?'wght' )([\d.]*)(.*)$/, '$1' + mnt.fonts[fontName].bold + '$3') : null;
     },
 
     /**
@@ -63,10 +62,12 @@ mnt.helpers = {
 	 * Builds font variation settings array and sets value for bold
      * @param {string} fontName
      * @param {string} settingsType
+     * @param {Object} [options = {}]
      * @returns {Array}
      */
-    buildFontCssSettings: function(fontName, settingsType) {
-        var fonts = mnt.fonts,
+    buildFontCssSettings: function(fontName, settingsType, options) {
+        var options = options || {},
+			fonts = mnt.fonts,
             fontSettings = [],
             feature,
             axis,
@@ -75,8 +76,12 @@ mnt.helpers = {
         if (settingsType === 'feature') {
             var fontFeature = fonts[fontName].feature;
             for (feature in fontFeature) {
-                if (fontFeature.hasOwnProperty(feature)) {
-                    fontSettings.push('"' + feature + '" ' + fontFeature[feature]);
+				if (fontFeature.hasOwnProperty(feature)) {
+                    if (options.hasOwnProperty(feature)) {
+                        fontSettings.push("'" + feature + "' " + options[feature]);
+                    } else {
+                        fontSettings.push("'" + feature + "' " + fontFeature[feature]);
+					}
                 }
 			}
 
@@ -87,8 +92,12 @@ mnt.helpers = {
         	var fontVariation = fonts[fontName].variation;
             for (axis in fontVariation) {
                 if (fontVariation.hasOwnProperty(axis)) {
-                    value = fontVariation[axis].value || fontVariation[axis].default;
-                    fontSettings.push('"' + axis + '" ' + value);
+                    if (options.hasOwnProperty(axis)) {
+                        value = options[axis];
+                    } else {
+                        value = fontVariation[axis].value || fontVariation[axis].default;
+                    }
+                    fontSettings.push("'" + axis + "' " + value);
                     if (axis === 'wght') {
                         fonts[fontName].bold = mnt.helpers.setWghtAxisBoldValue(value, fontVariation[axis].max);
                     }
@@ -134,16 +143,8 @@ mnt.methods = {
 	incompatibilityInform: function() {
 		if (!mnt.helpers.isPropertySupported('fontVariationSettings')) {
 			alert('Whoa, hold your horses Dude! Your browser doesn\'t support core fuctionality: font-variation-settings! \nSwitch to Webkit Nightly browser to check out this cool cutting-edge feature! \n** At least you can still play with settings sliders ;) **');
-			console.log('Whoa, hold your horses Dude! Your browser doesn\'t support core fuctionality: font-variation-settings! \nSwitch to Webkit Nightly browser to check out this cool cutting-edge feature! \n** At least you can still play with settings sliders ;) **');
+			console.error('Whoa, hold your horses Dude! Your browser doesn\'t support core fuctionality: font-variation-settings! \nSwitch to Webkit Nightly browser to check out this cool cutting-edge feature! \n** At least you can still play with settings sliders ;) **');
 		}
-	},
-
-	// TODO: do it better
-	toggleClass: function(elementID, className, elementWithClass) {
-		elementWithClass = elementWithClass || elementID;
-		document.querySelector(elementID).addEventListener('click', function() {
-			document.querySelector(elementWithClass).classList.toggle(className);
-		});
 	},
 
     /**
@@ -249,10 +250,8 @@ mnt.methods = {
 
                     listNode.classList.add('input-set', 'range');
 
-                    output.classList.add('range-value');
                     output.value = fontProperty[axis].default;
 
-                    input.classList.add('range-input');
                     input.id = fontName + '-' + axis;
                     input.setAttribute('data-font-name', fontName);
                     input.name = axis;
@@ -261,7 +260,6 @@ mnt.methods = {
                     input.max = fontProperty[axis].max;
                     input.value = fontProperty[axis].default;
 
-                    label.classList.add('range-label');
                     label.htmlFor = fontName + axis;
                     label.innerText = axis;
 
@@ -505,16 +503,152 @@ mnt.methods = {
 	}
 };
 
-mnt.settingsSection = {
-	init: function() {
-		// Open settings menu
-		// TODO: optimize!
-		mnt.methods.toggleClass('#settingsButton', 'open', '#settingsWrapper');
-		mnt.methods.toggleClass('#settingsButton', 'open', '.console-content');
-	}
+mnt.adjustElementWidth = {
+    /**
+	 *
+     */
+    getTitleInputInnerWidth: function() {
+    	mnt.adjustElementWidth.buildOptions();
+        mnt.adjustElementWidth.options.editableElement.removeEventListener('input', mnt.adjustElementWidth.listener);
+        mnt.adjustElementWidth.options.editableElement.addEventListener('input', mnt.adjustElementWidth.listener);
+    },
+    options: {},
+
+    /**
+	 *
+     */
+    buildOptions: function() {
+        var options = mnt.adjustElementWidth.options;
+
+        options.editableElement = document.getElementsByTagName('h1')[0];
+        options.ghostSpan = document.createElement('span');
+        options.editableElementComputedStyles = window.getComputedStyle(options.editableElement, null);
+        options.editableElementWidth = options.editableElement.clientWidth;
+
+        options.ghostSpan.innerText = options.editableElement.innerText;
+        document.getElementsByTagName('footer')[0].appendChild(options.ghostSpan);
+    },
+
+    /**
+	 *
+     */
+    listener: function() {
+        var index = 0,
+            options = mnt.adjustElementWidth.options,
+			axisMinValue = 0,
+            axisMaxValue = 0;
+        options.axisName = 'wdth';
+        mnt.adjustElementWidth.setStyles(options);
+        if (!options.fontName ||
+			!mnt.fonts.hasOwnProperty(options.fontName) ||
+			!mnt.fonts[options.fontName].variation.hasOwnProperty(options.axisName)) {
+            return;
+        }
+        options.axis = mnt.fonts[options.fontName].variation[options.axisName];
+        options.currentAxisValue = mnt.adjustElementWidth.getCurrentAxisValue(options.axisName);
+
+        if (options.ghostSpan.clientWidth >= options.editableElementWidth) {
+            axisMinValue = options.axis.min;
+            axisMaxValue = options.currentAxisValue;
+        }
+        if (options.ghostSpan.clientWidth < options.editableElementWidth) {
+            axisMinValue = options.currentAxisValue;
+            axisMaxValue = options.axis.max;
+        }
+
+        mnt.adjustElementWidth.binarySearch(axisMinValue, axisMaxValue, options, index);
+    },
+
+    /**
+	 *
+     * @param {String} axisName
+     * @returns {Number}
+     */
+    getCurrentAxisValue: function(axisName) {
+		var value = 0;
+		mnt.adjustElementWidth.options.ghostSpan.style.fontVariationSettings.split(', ').forEach(function(axisValueString) {
+        	var axisValueArray = axisValueString.split(' ');
+        	for (var index = 0; index < axisValueArray.length; index ++) {
+        		if (axisValueArray[index] === "'" + axisName + "'") {
+                    value = parseInt(axisValueArray[index + 1]);
+                    return;
+				}
+			}
+        });
+
+        return value;
+    },
+
+    /**
+	 *
+     * @param {Object} options
+     * @returns {null}
+     */
+    setStyles: function(options) {
+        var property;
+        if (!options.editableElementComputedStyles) {
+        	console.error('Couldn\'t compute styles of: ' + options.editableElement);
+            return null;
+        }
+
+        for (property in options.editableElementComputedStyles) {
+            if (options.editableElementComputedStyles.hasOwnProperty(property) &&
+				mnt.adjustElementWidth.isStylePropertyValid(options.editableElementComputedStyles[property])) {
+                options.ghostSpan.style[property] = options.editableElementComputedStyles[property];
+            }
+        }
+
+        options.ghostSpan.innerText = options.editableElement.innerText;
+        options.ghostSpan.style.position = 'absolute';
+        options.ghostSpan.style.width = 'auto';
+        options.ghostSpan.style.color = 'transparent';
+        options.ghostSpan.style.top = '-100vh';
+
+        options.fontName = options.ghostSpan.style.fontFamily.split(', ')[0];
+    },
+
+    binarySearch: function(min, max, options, index) {
+    	var delta;
+        if (index > 10) {
+            return;
+        }
+
+        index++;
+
+        options.currentAxisValue = Math.floor(((max - min) / 2) + min);
+        options.fvsValue = mnt.helpers.buildFontCssSettings(options.fontName, 'variation', {[options.axisName]: options.currentAxisValue}).join(', ');
+        options.editableElement.style.fontVariationSettings = options.fvsValue;
+        options.ghostSpan.style.fontVariationSettings = options.fvsValue;
+
+        delta = options.editableElementWidth - options.ghostSpan.clientWidth;
+
+        if ((delta <= (options.editableElementWidth * 0.01) && delta > 0) || (min === max)) {
+            return;
+        }
+
+        if (options.ghostSpan.clientWidth > options.editableElementWidth) {
+            max = parseInt(options.currentAxisValue);
+            mnt.adjustElementWidth.binarySearch(min, max, options, index);
+            return;
+        }
+
+        if (options.ghostSpan.clientWidth < options.editableElementWidth) {
+            min = parseInt(options.currentAxisValue);
+            mnt.adjustElementWidth.binarySearch(min, max, options, index);
+        }
+    },
+
+    isStylePropertyValid: function(value) {
+        return typeof value !== 'undefined' &&
+            typeof value !== 'object' &&
+            typeof value !== 'function' &&
+            value.length > 0 &&
+            value !== parseInt(value);
+    }
 };
 
 // Start everything
 document.addEventListener('DOMContentLoaded', function() {
 	mnt.init();
+	mnt.adjustElementWidth.getTitleInputInnerWidth();
 });

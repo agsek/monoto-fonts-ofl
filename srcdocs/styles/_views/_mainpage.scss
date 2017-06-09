@@ -1,6 +1,8 @@
+@import '../_partials/variables';
+
 body {
 	background-color: $color-background;
-	color: $color-font-light;
+	color: $color-font-main;
 	font-family: $font-main;
 	font-size: 100%;
 	-webkit-font-smoothing: antialiased;
@@ -12,119 +14,53 @@ body {
 h1 {
 	font-size: $font-header-size;
 	line-height: $font-line-height;
+
+	input {
+		max-width: 100%;
+		width: 100%;
+		background-color: $color-background;
+	}
 }
 
-section {
+[role="main"],
+[role="contentinfo"] {
 	width: 100%;
 	max-width: $dim-container-width;
 	margin: 0 auto;
 }
 
 fieldset {
-	padding: 0 10px 20px;
-}
-
-.input-set.range {
-	visibility: hidden;
-	padding: 1em;
-	margin: 1em 0 0;
-	width: 100%;
-	color: $color-font-dark;
-	position: relative;
-
-	label {
-	    text-align: center;
-	    text-transform: uppercase;
-	    font-size: .7em;
-	    letter-spacing: .08em;
-	    padding: 1em .5em 0;
-	}
-
-	output {
-		position: absolute;
-		top: -1.65em;
-		left: 0;
-		background-color: $color-font-dark;
-		color: $color-font-light;
-		box-sizing: content-box;
-		padding: .4em .6em;
-		min-width: 1.5em;
-		text-align: center;
-
-		&:after { 
-			content: '';
-			position: absolute;
-			width: 0;
-			height: 0;
-			border-top: 5px solid $color-font-dark;
-			border-left: 10px solid transparent;
-			border-right: 10px solid transparent;
-			top: 100%;
-			left: 50%;
-			margin-left: -10px;
-		}
-	}
-
-	label,
-	input,
-	output {
-		display: block;
-	}
+	padding: 10px 10px 20px;
 }
 
 .console {
-	position: relative;
+	//position: relative;
+	width: 100%;
 
-	.console-content {
-		position: relative;
-		z-index: 1;
-		left: $dim-settings-button;
-		width: calc(100% - (2* #{$dim-settings-button}));
-		transition: left #{$transition-duration} #{$transition-timing-function};
-
-		&.open {
-			left: 25%;
-		}
-	}
+	//.console-content {
+	//	position: relative;
+	//	z-index: 1;
+	//	left: $dim-settings-button;
+	//	width: calc(100% - (2* #{$dim-settings-button}));
+	//	transition: left #{$transition-duration} #{$transition-timing-function};
+    //
+	//	&.open {
+	//		left: 25%;
+	//	}
+	//}
 }
 
 .settings-wrapper {
-	position: absolute;
-	top: calc(#{$font-header-size} * #{$font-line-height});
-	left: $dim-settings-button;
-	width: calc(25% - #{$dim-settings-button});
+	position: fixed;
+	top: 10px;
+	right: 10px;
+	width: 250px;
 	height: auto;
-	background-color: $color-button;
-	transition: all #{$transition-duration} #{$transition-timing-function};
+	background-color: $color-background;
 	font-variation-settings: normal;
 	font-feature-settings: normal;
 	z-index: 0;
-	transition: left #{$transition-duration} #{$transition-timing-function};
-
-	&.open {
-		.input-set.range {
-			visibility: visible;
-		}
-
-		button {
-			background-image: url($svg-exit);
-			background-size: 40%;
-			left: initial;
-			right: calc(-100% + #{$dim-settings-button});
-		}
-	}
-
-	button {
-		background: $color-button url($svg-gear) center center/70% no-repeat;
-		border: none;
-		cursor: pointer;
-		position: relative;
-	    padding: .5em;
-	    width: $dim-settings-button;
-	    height: $dim-settings-button;
-	    right: $dim-settings-button;
-	    transition: right #{$transition-duration} #{$transition-timing-function}, background 0s #{$transition-timing-function} #{$transition-delay};
-	}
+	box-shadow: 0 0 0 1px #adadad;
 }
 
 .font-settings {
