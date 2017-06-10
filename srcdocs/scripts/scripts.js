@@ -143,8 +143,8 @@ mnt.methods = {
      */
 	incompatibilityInform: function() {
 		if (!mnt.helpers.isPropertySupported('fontVariationSettings')) {
-			alert('Whoa, hold your horses Dude! Your browser doesn\'t support core fuctionality: font-variation-settings! \nSwitch to Webkit Nightly browser to check out this cool cutting-edge feature! \n** At least you can still play with settings sliders ;) **');
-			console.error('Whoa, hold your horses Dude! Your browser doesn\'t support core fuctionality: font-variation-settings! \nSwitch to Webkit Nightly browser to check out this cool cutting-edge feature! \n** At least you can still play with settings sliders ;) **');
+			alert('Whoa, hold your horses Dude! Your browser doesn\'t support core functionality: font-variation-settings! \nSwitch to Webkit Nightly / Safari Technology Preview / Chrome Canary* browser to check out this cool cutting-edge feature! \n\n* with "Experimental Web Platform features" flag enabled.');
+			console.error('Whoa, hold your horses Dude! Your browser doesn\'t support core functionality: font-variation-settings! \nSwitch to Webkit Nightly / Safari Technology Preview / Chrome Canary* browser to check out this cool cutting-edge feature! \n\n* with "Experimental Web Platform features" flag enabled.');
 		}
 	},
 
