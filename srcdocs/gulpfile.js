@@ -4,9 +4,9 @@
  */
 // Load plugins
 var gulp = require('gulp'), // gulp main module
-  sass = require('gulp-sass'), // compiles sass
-  sourcemaps = require('gulp-sourcemaps') // creates source maps
-autoprefixer = require('gulp-autoprefixer'), // adds prefixes to CSS
+    sass = require('gulp-sass'), // compiles sass
+    sourcemaps = require('gulp-sourcemaps') // creates source maps
+    autoprefixer = require('gulp-autoprefixer'), // adds prefixes to CSS
     cssnano = require('gulp-cssnano'), // minifies CSS
     jshint = require('gulp-jshint'), // checkes JS code
     uglify = require('gulp-uglify'), // minifies JS
@@ -40,7 +40,7 @@ gulp.task('styles', function () {
               precision: 10
             })
             .on('error', notify.onError(function (error) {
-              return 'Error spotted! ' + error.message
+              return 'Error spotted! ' + error
             }))
         )
         .pipe(autoprefixer('last 2 version'))
@@ -64,14 +64,17 @@ gulp.task('scripts', function () {
   return gulp.src(pathToScripts + '**/*.js')
         .pipe(jshint('.jshintrc'))
         .pipe(jshint.reporter('default'))
-        .pipe(concat('main.js'))
+        .pipe(concat('main.js')
+          .on('error', notify.onError(function (error) {
+              return 'Error spotted! ' + error
+            })))
         .pipe(gulp.dest(pathToDocs + 'scripts'))
         .pipe(rename({
           suffix: '.min'
         }))
         .pipe(uglify()
             .on('error', notify.onError(function (error) {
-              return 'Error spotted! ' + error.message
+              return 'Error spotted! ' + error
             })))
         .pipe(gulp.dest(pathToDocs + 'scripts'))
 })

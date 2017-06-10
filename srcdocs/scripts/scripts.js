@@ -130,6 +130,7 @@ mnt.methods = {
             _self.getFontObject(fontPathArray[index])
                 .then(function(fontInfo) {
                     mnt.methods.updateFontsObject(fontInfo);
+                    document.getElementsByTagName('body')[0].classList.remove('fonts-loading');
                 })
                 .catch(function (error) {
                     console.error('Augh, there was an error!', error);
@@ -174,8 +175,8 @@ mnt.methods = {
 				mnt.fonts[element.dataset.fontName].variation[element.name].value = element.value;
 				outputTag = children[index];
 				outputTag.value = element.value;
-				outputTag.style.left = newPointPosition + "px";
-				outputTag.style.marginLeft = offset + "%";
+				outputTag.style.left = newPointPosition + 'px';
+				outputTag.style.marginLeft = offset + '%';
             }
 		}
 	},
@@ -416,7 +417,7 @@ mnt.methods = {
 			};
 
 			xhr.onerror = function(error) {
-				reject(Error("Network Error"));
+				reject(Error('An error occured: ' + error.message));
 			};
 
 			xhr.send();
@@ -481,7 +482,7 @@ mnt.methods = {
 		label.htmlFor = fontName;
 		radio.type = 'radio';
 		radio.id = fontName;
-		radio.name = "font-name";
+		radio.name = 'font-name';
         radio.value = fontName;
         radio.innerHTML = fontName;
         radio.checked = isRadioSelected;
@@ -524,6 +525,8 @@ mnt.adjustElementWidth = {
         options.ghostSpan = document.createElement('span');
         options.editableElementComputedStyles = window.getComputedStyle(options.editableElement, null);
         options.editableElementWidth = options.editableElement.clientWidth;
+        options.ghostSpan.style.color = 'transparent';
+        options.ghostSpan.style.top = '-100vh';
 
         options.ghostSpan.innerText = options.editableElement.innerText;
         document.getElementsByTagName('footer')[0].appendChild(options.ghostSpan);
@@ -555,7 +558,7 @@ mnt.adjustElementWidth = {
             axisMinValue = options.currentAxisValue;
             axisMaxValue = options.axis.max;
         }
-
+        
         mnt.adjustElementWidth.binarySearch(axisMinValue, axisMaxValue, options, index);
     },
 
@@ -608,7 +611,8 @@ mnt.adjustElementWidth = {
     },
 
     binarySearch: function(min, max, options, index) {
-    	var delta;
+    	var delta,
+            axisData = {};
         if (index > 10) {
             return;
         }
@@ -616,7 +620,8 @@ mnt.adjustElementWidth = {
         index++;
 
         options.currentAxisValue = Math.floor(((max - min) / 2) + min);
-        options.fvsValue = mnt.helpers.buildFontCssSettings(options.fontName, 'variation', {[options.axisName]: options.currentAxisValue}).join(', ');
+        axisData[options.axisName] = options.currentAxisValue;
+        options.fvsValue = mnt.helpers.buildFontCssSettings(options.fontName, 'variation', axisData).join(', ');
         options.editableElement.style.fontVariationSettings = options.fvsValue;
         options.ghostSpan.style.fontVariationSettings = options.fvsValue;
 
@@ -626,16 +631,15 @@ mnt.adjustElementWidth = {
             return;
         }
 
-        if (options.ghostSpan.clientWidth > options.editableElementWidth) {
+        if (options.ghostSpan.clientWidth >= options.editableElementWidth) {
             max = parseInt(options.currentAxisValue);
-            mnt.adjustElementWidth.binarySearch(min, max, options, index);
-            return;
         }
 
         if (options.ghostSpan.clientWidth < options.editableElementWidth) {
             min = parseInt(options.currentAxisValue);
-            mnt.adjustElementWidth.binarySearch(min, max, options, index);
         }
+
+        mnt.adjustElementWidth.binarySearch(min, max, options, index);
     },
 
     isStylePropertyValid: function(value) {

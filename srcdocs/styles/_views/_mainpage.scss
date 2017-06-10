@@ -9,6 +9,24 @@ body {
 	font-variation-settings: var(--font-variation-settings);
 	font-feature-settings: var(--font-feature-settings);
 	letter-spacing: 0.02em;
+
+	&.fonts-loading {
+		position: relative;
+
+		&:before {
+			position: absolute;
+			background-color: $color-background;
+			content: '';
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+		}
+
+		* {
+			color: transparent !important;
+		}
+	}
 }
 
 h1 {
@@ -34,20 +52,7 @@ fieldset {
 }
 
 .console {
-	//position: relative;
 	width: 100%;
-
-	//.console-content {
-	//	position: relative;
-	//	z-index: 1;
-	//	left: $dim-settings-button;
-	//	width: calc(100% - (2* #{$dim-settings-button}));
-	//	transition: left #{$transition-duration} #{$transition-timing-function};
-    //
-	//	&.open {
-	//		left: 25%;
-	//	}
-	//}
 }
 
 .settings-wrapper {
@@ -60,7 +65,10 @@ fieldset {
 	font-variation-settings: normal;
 	font-feature-settings: normal;
 	z-index: 0;
-	box-shadow: 0 0 0 1px #adadad;
+
+	body:not(.fonts-loading) & {
+		box-shadow: 0 0 0 1px #adadad;
+	}
 }
 
 .font-settings {
